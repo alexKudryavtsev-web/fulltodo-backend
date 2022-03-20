@@ -6,6 +6,7 @@ const TokenService = require("./token-service");
 const EmailService = require("./email-service");
 const ApiError = require("../error/api-error");
 const tokenModel = require("../models/token-model");
+const { TodosModel } = require("../models/todos-model");
 
 class UserService {
   async registration(email, password) {
@@ -24,6 +25,7 @@ class UserService {
       password: hashPassword,
       activationLink,
     });
+
     await EmailService.sendActivationMail(
       email,
       `${process.env.API_URL}/api/activate/${activationLink}`
@@ -33,6 +35,13 @@ class UserService {
 
     const tokens = await TokenService.generateTokens({ ...userDto });
     await TokenService.saveTokens(userDto.id, tokens.refreshToken);
+
+    const todos = await TodosModel.create({
+      user: user._id,
+    });
+
+    todos.save();
+
     return { user: userDto, ...tokens };
   }
 

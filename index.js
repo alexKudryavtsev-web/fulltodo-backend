@@ -3,6 +3,7 @@ const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const mongoose = require("mongoose");
 const router = require("./router/index.js");
+const todosRouter = require("./router/todos-router.js");
 const errorMiddleware = require("./middleware/error-middleware.js");
 
 require("dotenv").config();
@@ -19,6 +20,7 @@ app.use(
   })
 );
 app.use("/api", router);
+app.use("/api/todos", todosRouter);
 app.use(errorMiddleware);
 
 async function start() {
