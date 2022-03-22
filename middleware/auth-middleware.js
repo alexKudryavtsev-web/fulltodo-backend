@@ -4,7 +4,6 @@ const TokenService = require("../service/token-service");
 async function authMiddleware(req, res, next) {
   try {
     const authorizationHeader = req.headers.authorization;
-
     if (!authorizationHeader) {
       next(ApiError.UnathorizedError());
     }

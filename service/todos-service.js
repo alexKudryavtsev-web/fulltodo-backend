@@ -1,15 +1,12 @@
-const ApiError = require("../error/api-error");
 const { TodosModel, TodoItemsModel } = require("../models/todos-model");
-const UserModel = require("../models/user-model");
+const compareObject = require("../utils/compateObject");
 
 class TodosService {
   async read(userId) {
     const todos = await TodosModel.findOne({ user: userId });
     const todoItems = await TodoItemsModel.find();
 
-    return todoItems.filter(
-      (todo) => JSON.stringify(todo.todos) === JSON.stringify(todos._id)
-    );
+    return todoItems.filter((todo) => compareObject(todo.todos, todos._id));
   }
   async create(userId) {
     const todos = await TodosModel.findOne({ user: userId });
@@ -28,7 +25,8 @@ class TodosService {
   }
 
   async updateTodo(id, newTodo) {
-    return await TodoItemsModel.findByIdAndUpdate(id, newTodo);
+    await TodoItemsModel.findByIdAndUpdate(id, newTodo);
+    return await TodoItemsModel.findById(id);
   }
 
   async clear(userId) {

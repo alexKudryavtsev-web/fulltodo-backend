@@ -1,4 +1,4 @@
-const ApiError = require("../error/api-error");
+const TodoDto = require("../dto/todo-dto");
 const TodosService = require("../service/todos-service");
 
 class TodosController {
@@ -6,7 +6,8 @@ class TodosController {
     try {
       const { id } = req.user;
       const todos = await TodosService.read(id);
-      res.json(todos);
+
+      res.json(todos.map((todo) => new TodoDto(todo)));
     } catch (e) {
       next(e);
     }
@@ -16,7 +17,7 @@ class TodosController {
     try {
       const { id } = req.user;
       const newTodo = await TodosService.create(id);
-      res.json(newTodo);
+      res.json(new TodoDto(newTodo));
     } catch (e) {
       next(e);
     }
@@ -27,7 +28,7 @@ class TodosController {
       const { id } = req.body;
 
       const todo = await TodosService.removeTodo(id);
-      return res.json(todo);
+      return res.json(new TodoDto(todo));
     } catch (e) {
       next(e);
     }
@@ -36,9 +37,8 @@ class TodosController {
   async updateTodo(req, res, next) {
     try {
       const { id, newTodo } = req.body;
-
       const updated = await TodosService.updateTodo(id, newTodo);
-      return res.json(updated);
+      return res.json(new TodoDto(updated));
     } catch (e) {
       next(e);
     }
